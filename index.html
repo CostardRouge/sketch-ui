@@ -2,12 +2,47 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>SketchUI</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="SketchUI-icon"></div>
+    <div id="SketchUI-drawer"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <script type="module">
+      import SketchUI from '/src/main.jsx'
+
+      const sketchUI = new SketchUI( {
+        options: [ {
+            id: "option-1",
+            type: 'number',
+            label: 'Le chiffre',
+            min: 1,
+            max: 10,
+            step: 1,
+            defaultValue: 5,
+            category: 'Numbers'
+          },
+          {
+            id: "option-2",
+            type: 'number',
+            label: 'Le nombre',
+            min: 1,
+            max: 10,
+            step: 1,
+            defaultValue: 5,
+            category: 'Numbers'
+          }
+        ],
+        elements: {
+          drawer: 'div#SketchUI-drawer',
+          icon: 'div#SketchUI-icon'
+        },
+        logger: console.log
+      });
+
+      sketchUI.render()
+    </script>
   </body>
 </html>
