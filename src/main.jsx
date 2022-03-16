@@ -5,20 +5,32 @@ import ReactDOM from 'react-dom'
 // Entry-points
 import { SketchUIDrawer } from 'entrypoints';
 
+// Third party
+import { reduce } from 'lodash-es';
+
 class SketchUI {
   values = {};
-  logger = undefined;
-  options = undefined;
+  values = {};
+  options = [];
   elements = {
     drawer: undefined,
     icon: undefined
   };
+  defaultOpenValue = undefined;
+  logger = undefined;
 
-  constructor({ options, elements: { drawer, icon }, logger }) {
+  constructor({ options, open = false, elements: { drawer, icon }, logger }, render = true) {
     this.logger = logger;
     this.options = options;
+    this.defaultOpenValue = open;
     this.elements.drawer = document.querySelector(drawer);
     this.elements.icon = document.querySelector(icon);
+    this.values = reduce(options, (values, option) => {
+      values[option.id] = option.defaultValue;
+      return values;
+    }, {});
+
+    render && this.render();
   }
 
   render() {
@@ -27,6 +39,7 @@ class SketchUI {
         <SketchUIDrawer
           values={ this.values }
           options={ this.options }
+          defaultOpenValue={ this.defaultOpenValue }
           onChange={ (id, value) => this.onChange(id, value) }
         />
       </React.StrictMode>,

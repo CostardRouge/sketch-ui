@@ -19,21 +19,12 @@ import { DeviceFloppy } from 'tabler-icons-react';
 import { Text } from '@mantine/core';
 import { Switch } from '@mantine/core';
 import { Divider } from '@mantine/core';
-import { Title } from '@mantine/core';
 import { Accordion } from '@mantine/core';
 import { Slider } from '@mantine/core';
 import { NumberInput } from '@mantine/core';
 
-const SketchUIDrawer = ({ options, values, onChange }) => {
-  const [opened, setOpened] = useState(true);
-  const [loading, setLoading] = useState(true);
-
-  useEffect( () => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, [ loading, setLoading ]);
-
+const SketchUIDrawer = ({ options, values, onChange, defaultOpenValue }) => {
+  const [opened, setOpened] = useState(defaultOpenValue);
   const optionsGroupedByCategory = useMemo( () => groupBy( options, 'category'), [ options ]);
 
   return (
@@ -46,7 +37,7 @@ const SketchUIDrawer = ({ options, values, onChange }) => {
         <Drawer
           opened={opened}
           onClose={() => setOpened(false)}
-          title="SketchUI"
+          title="SketchUI 🎚"
           padding="lg"
           size="lg"
         >
@@ -137,7 +128,6 @@ const SketchUIDrawer = ({ options, values, onChange }) => {
 
         <Group position="center">
           <ActionIcon
-            loading={loading}
             onClick={() => setOpened(true)}
           >
             <Adjustments />
