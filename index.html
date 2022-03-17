@@ -14,6 +14,7 @@
       import SketchUI from '/src/main.jsx'
 
       const sketchUI = new SketchUI( {
+        open: true,
         options: [ {
             id: "option-1",
             type: 'number',
@@ -33,6 +34,38 @@
             step: 1,
             defaultValue: 5,
             category: 'Numbers'
+          },
+          {
+            id: "option-3",
+            type: 'button',
+            text: 'Clear',
+            icon: 'Eraser',
+            action: () => alert('Clear'),
+            category: 'General'
+          },
+          {
+            id: "option-4",
+            type: 'button',
+            text: 'Pause',
+            icon: 'PlayerPause',
+            action: () => alert('Pause'),
+            category: 'General'
+          },
+          {
+            id: "option-5",
+            type: 'button',
+            text: 'Start recording',
+            icon: 'Circle',
+            action: () => alert('Start recording'),
+            category: 'General'
+          },
+          {
+            id: "option-6",
+            type: 'button',
+            text: 'Save .png',
+            icon: 'DeviceFloppy',
+            action: () => alert('Save .png'),
+            category: 'General'
           }
         ],
         elements: {
