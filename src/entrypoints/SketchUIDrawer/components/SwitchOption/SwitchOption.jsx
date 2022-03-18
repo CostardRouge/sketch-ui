@@ -6,7 +6,7 @@ const SwitchOption = ( { id, label, value, onChange } ) =>  (
     <Text size="sm">{ label }</Text>
     <Switch
       checked={value}
-      onChange={ event => onChange(id, event.currentTarget.checked) }
+      onChange={ event => onChange( event.currentTarget.checked ) }
     />
   </Group>
 );

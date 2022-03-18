@@ -2,14 +2,14 @@
 import { Button } from '@mantine/core';
 import * as Icons from 'tabler-icons-react';
 
-const ButtonOption = ( { color = 'gray', variant = 'light', text, icon, action } ) => {
+const ButtonOption = ( { color = 'gray', variant = 'light', text, icon, onClick } ) => {
   const Icon = Icons[ icon ]
   
   return (
     <Button
       color={ color }
       variant={ variant }
-      onClick={ action }
+      onClick={ onClick }
       leftIcon={ Icon && (
         <Icon size={14} />
       ) }

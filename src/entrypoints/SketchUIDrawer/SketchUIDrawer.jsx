@@ -3,13 +3,11 @@ import { useState, useMemo, useEffect } from 'react';
 
 // Third party
 import { map, reduce, groupBy } from 'lodash-es';
-import { MantineProvider, Drawer, Button, Group } from '@mantine/core';
+import { MantineProvider, Drawer, Group } from '@mantine/core';
 
 import { ActionIcon } from '@mantine/core';
 import { Adjustments } from 'tabler-icons-react';
-
 import { Accordion } from '@mantine/core';
-import { Slider } from '@mantine/core';
 
 // Components
 import OptionComponents from './components';
@@ -73,7 +71,10 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
                           <OptionComponent
                             { ...option }
                             key={ option.id }
-                            onChange={ setValue }
+                            onChange={ value => {
+                              setValue(option.id, value);
+                              option.onChange && option.onChange(value);
+                            } }
                             value={ values[option.id] }
                           />
                         )
@@ -87,32 +88,6 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
             ) )
           }
         </Accordion>
-
-
-          {/* <Accordion.Item label="General">
-            <Text size="sm">General time speed</Text>
-            <Slider
-              min={-2}
-              max={2}
-              step={1}
-              showLabelOnHover={false}
-              marks={[
-                { value: -2, label: '-2' },
-                { value: -1, label: '-1' },
-                { value: 0, label: '0' },
-                { value: 1, label: '1' },
-                { value: 2, label: '2' },
-              ]}
-            />
-            <br />
-          </Accordion.Item>
-        </Accordion>
-
-        <Group direction="column" grow>
-          <Button color="gray" variant="subtle">Default</Button>
-          <Button color="gray"variant="subtle">Load</Button>
-          <Button color="gray" variant="light">Save</Button>
-        </Group> */}
       </Drawer>
 
       <Group position="center">

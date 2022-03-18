@@ -16,11 +16,25 @@
       const sketchUI = new SketchUI( {
         open: true,
         options: [ 
-          {
+        {
             id: "option-switch",
             type: 'switch',
             label: 'Le switch',
             defaultValue: true,
+            category: ''
+          },
+          {
+            id: "option-slider",
+            type: 'slider',
+            label: 'Le slider',
+            min: 1,
+            max: 120,
+            defaultValue: 60,
+            marks: [
+              { value: 20, label: '20 fps' },
+              { value: 60, label: '60 fps' },
+              { value: 100, label: '100 fps' },
+            ],
             category: ''
           },
           {
@@ -68,7 +82,7 @@
             type: 'button',
             text: 'Clear',
             icon: 'Eraser',
-            action: () => alert('Clear'),
+            onClick: () => alert('Clear'),
             category: 'General'
           },
           {
@@ -76,7 +90,7 @@
             type: 'button',
             text: 'Pause',
             icon: 'PlayerPause',
-            action: () => alert('Pause'),
+            onClick: () => alert('Pause'),
             category: 'General'
           },
           {
@@ -84,7 +98,7 @@
             type: 'button',
             text: 'Start recording',
             icon: 'Circle',
-            action: () => alert('Start recording'),
+            onClick: () => alert('Start recording'),
             category: 'General'
           },
           {
@@ -92,7 +106,7 @@
             type: 'button',
             text: 'Save .png',
             icon: 'DeviceFloppy',
-            action: () => alert('Save .png'),
+            onClick: () => alert('Save .png'),
             category: 'General'
           }
         ],
