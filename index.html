@@ -15,7 +15,35 @@
 
       const sketchUI = new SketchUI( {
         open: true,
-        options: [ {
+        options: [ 
+          {
+            id: "option-switch",
+            type: 'switch',
+            label: 'Le switch',
+            defaultValue: true,
+            category: ''
+          },
+          {
+            id: "option-text",
+            type: 'text',
+            label: 'Le texte',
+            defaultValue: 'Hello World',
+            category: 'Texts'
+          },
+          {
+            id: "option-select",
+            type: 'select',
+            label: 'Le select',
+            defaultValue: 'react',
+            options: [
+              { value: 'react', label: 'React' },
+              { value: 'ng', label: 'Angular' },
+              { value: 'svelte', label: 'Svelte' },
+              { value: 'vue', label: 'Vue' },
+            ],
+            category: 'Texts'
+          },
+          {
             id: "option-1",
             type: 'number',
             label: 'Le chiffre',
@@ -74,6 +102,8 @@
         },
         logger: console.log
       });
+
+      window.sketchUI = sketchUI;
     </script>
   </body>
 </html>
