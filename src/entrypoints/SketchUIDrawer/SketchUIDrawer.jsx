@@ -7,27 +7,76 @@ import { MantineProvider, Drawer, Group } from '@mantine/core';
 
 import { ActionIcon } from '@mantine/core';
 import { Adjustments } from 'tabler-icons-react';
-import { Accordion } from '@mantine/core';
+import { Accordion, Button } from '@mantine/core';
+
+// Hooks
+import { useLocalStorage } from '@mantine/hooks';
 
 // Components
 import OptionComponents from './components';
+import SwitchOption from './components/SwitchOption/SwitchOption';
 
 const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
-  const defaultValues = useMemo( () => (
+  const optionsGroupedByCategory = useMemo( () => groupBy( options, 'category'), [ options ]);
+  const [settings, setSettings] = useLocalStorage({ key: 'sketch-ui-settings', defaultValue: {
+    autoSave: false,
+    keepOpen: defaultOpenValue,
+    accordionState: {},
+  } });
+  const [values, setValues] = useState((
     reduce(options, (values, option) => {
-      values[option.id] = option.defaultValue;
+      values[option.id] = settings?.values?.[option.id] ?? option.defaultValue;
       return values;
     }, {})
-  ), [options]);
-  const [values, setValues] = useState(defaultValues);
-  const [opened, setOpened] = useState(defaultOpenValue);
-  const optionsGroupedByCategory = useMemo( () => groupBy( options, 'category'), [ options ]);
+  ));
+  const { autoSave, keepOpen, accordionState } = settings;
+  const [opened, setOpened] = useState(keepOpen);
 
   const setValue = (id, value) => {
     setValues( previousValues => ({
       ...previousValues,
       [id]: value
     }))
+
+    if (true !== autoSave) {
+      return;
+    }
+
+    setSettings( previousSettings => ({
+      ...previousSettings,
+      values: {
+        ...previousSettings.values,
+        [id]: value
+      }
+    }))
+  };
+
+  const persistValues = () => {
+    setSettings( previousSettings => {
+      const touchedOptions = reduce(options, (touchedOptions, option) => {
+        if (values[option.id] !== option.defaultValue) {
+          touchedOptions[option.id] = values[option.id];
+        }
+        return touchedOptions;
+      }, {} );
+
+      return {
+        ...previousSettings,
+        values: touchedOptions
+      }
+    })
+  };
+
+  const resetValues = () => {
+    setSettings( previousSettings => ({
+      ...previousSettings,
+      values: {},
+      accordionState: {}
+    }))
+    setValues(reduce(options, (values, option) => {
+      values[option.id] = option.defaultValue;
+      return values;
+    }, {}));
   };
 
   useEffect( () => {
@@ -42,7 +91,7 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
       } }
     >
       <Drawer
-        opened={opened}
+        opened={ opened }
         onClose={() => setOpened(false)}
         overlayOpacity={0}
         title="SketchUI 🎚"
@@ -51,7 +100,13 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
       >
         <Accordion
           multiple
-          initialItem={0}
+          onChange={ state => {
+            setSettings( previousSettings => ({
+              ...previousSettings,
+              accordionState: state
+            }))
+          } }
+          initialState={ accordionState }
           style={{ marginLeft: -20, marginRight: -20 }}
           iconPosition="right"
         >
@@ -88,6 +143,50 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
             ) )
           }
         </Accordion>
+
+        <Group grow direction="column">
+          <span></span>
+          <Button
+            variant="default"
+            color="gray"
+            onClick={ resetValues }
+          >
+            Reset options
+          </Button>
+
+          {/* <Button variant="default" color="gray">
+            Load options
+          </Button> */}
+
+          <Button
+            variant="default"
+            color="gray"
+            onClick={ persistValues }
+          >
+            Save options
+          </Button>
+          <span></span>
+        </Group>
+
+        <SwitchOption
+          value={ autoSave }
+          label="Auto save options"
+          onChange={ checked => setSettings( previousSettings => ({
+            ...previousSettings,
+            autoSave: checked
+          })) }
+        />
+        <span>&nbsp;</span>
+      
+        <SwitchOption
+          value={ keepOpen }
+          label="Keep SketchUI open"
+          onChange={ checked => setSettings( previousSettings => ({
+            ...previousSettings,
+            keepOpen: checked
+          })) }
+        />
+
       </Drawer>
 
       <Group position="center">
