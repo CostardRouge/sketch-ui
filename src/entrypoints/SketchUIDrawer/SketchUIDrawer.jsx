@@ -16,7 +16,7 @@ import { useLocalStorage } from '@mantine/hooks';
 import OptionComponents from './components';
 import SwitchOption from './components/SwitchOption/SwitchOption';
 
-const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
+const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter }) => {
   const optionsGroupedByCategory = useMemo( () => groupBy( options, 'category'), [ options ]);
   const [settings, setSettings] = useLocalStorage({ key: 'sketch-ui-settings', defaultValue: {
     autoSave: false,
@@ -25,7 +25,7 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
   } });
   const [values, setValues] = useState((
     reduce(options, (values, option) => {
-      values[option.id] = settings?.values?.[option.id] ?? option.defaultValue;
+      values[option.id] = settings?.values?.[name]?.[option.id] ?? option.defaultValue;
       return values;
     }, {})
   ));
@@ -62,7 +62,10 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
 
       return {
         ...previousSettings,
-        values: touchedOptions
+        values: {
+          ...previousSettings.values,
+          [name]: touchedOptions
+        }
       }
     })
   };
@@ -70,7 +73,9 @@ const SketchUIDrawer = ({ options, defaultOpenValue, getter, setter }) => {
   const resetValues = () => {
     setSettings( previousSettings => ({
       ...previousSettings,
-      values: {},
+      values: {
+        [name]: {}
+      },
       accordionState: {}
     }))
     setValues(reduce(options, (values, option) => {

@@ -14,7 +14,8 @@ class SketchUI {
   defaultOpenValue = undefined;
   logger = undefined;
 
-  constructor({ options, open = false, elements: { drawer, icon }, logger }, render = true) {
+  constructor({ options, open = false, name, elements: { drawer, icon }, logger }, render = true) {
+    this.name = name;
     this.logger = logger;
     this.options = options;
 
@@ -24,6 +25,7 @@ class SketchUI {
     this.defaultOpenValue = open;
     this.elements.drawer = document.querySelector(drawer);
     this.elements.icon = document.querySelector(icon);
+
     render && this.render();
   }
 
@@ -31,6 +33,7 @@ class SketchUI {
     ReactDOM.render(
       <React.StrictMode>
         <SketchUIDrawer
+          name={ this.name }
           values={ this.values }
           options={ this.options }
           defaultOpenValue={ this.defaultOpenValue }
