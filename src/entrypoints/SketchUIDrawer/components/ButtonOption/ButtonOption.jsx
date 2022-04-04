@@ -10,6 +10,9 @@ const ButtonOption = ( { color = 'gray', variant = 'light', text, icon, onClick 
       color={ color }
       variant={ variant }
       onClick={ onClick }
+      style={ {
+        width: '100%',
+      } }
       leftIcon={ Icon && (
         <Icon size={14} />
       ) }

@@ -1,5 +1,5 @@
 // React
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Fragment } from 'react';
 
 // Third party
 import { map, reduce, groupBy } from 'lodash-es';
@@ -7,7 +7,8 @@ import { MantineProvider, Drawer, Group } from '@mantine/core';
 
 import { ActionIcon } from '@mantine/core';
 import { Adjustments } from 'tabler-icons-react';
-import { Accordion, Button } from '@mantine/core';
+import { Accordion, Button, ScrollArea } from '@mantine/core';
+
 
 // Hooks
 import { useLocalStorage } from '@mantine/hooks';
@@ -22,10 +23,11 @@ const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter 
     autoSave: false,
     keepOpen: defaultOpenValue,
     accordionState: {},
+    values: {}
   } });
   const [values, setValues] = useState((
     reduce(options, (values, option) => {
-      values[option.id] = settings?.values?.[name]?.[option.id] ?? option.defaultValue;
+      values[option.id] = settings.values?.[name]?.[option.id] ?? option.defaultValue;
       return values;
     }, {})
   ));
@@ -46,7 +48,10 @@ const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter 
       ...previousSettings,
       values: {
         ...previousSettings.values,
-        [id]: value
+        [name]: {
+          ...previousSettings.values[name],
+          [id]: value
+        }
       }
     }))
   };
@@ -103,104 +108,137 @@ const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter 
         padding="lg"
         size="lg"
       >
-        <Accordion
-          multiple
-          onChange={ state => {
-            setSettings( previousSettings => ({
-              ...previousSettings,
-              accordionState: state
-            }))
+        <ScrollArea
+          style={ {
+            height: '90%',
+            marginLeft: -20,
+            marginRight: -20
           } }
-          initialState={ accordionState }
-          style={{ marginLeft: -20, marginRight: -20 }}
-          iconPosition="right"
         >
-          {
-            map( optionsGroupedByCategory, ( categoryOptions, category ) => (
-              <Accordion.Item
-                key={ category }
-                label={ category }
-              >
-                <Group direction="column" grow>
-                  {
-                    map( categoryOptions, ( { type, ...option } ) => {
-                      const OptionComponent = OptionComponents[type];
+          <Accordion
+            multiple
+            onChange={ state => {
+              setSettings( previousSettings => ({
+                ...previousSettings,
+                accordionState: state
+              }))
+            } }
+            initialState={ accordionState }
+            iconPosition="right"
+          >
+            {
+              map( optionsGroupedByCategory, ( categoryOptions, category ) => (
+                <Accordion.Item
+                  key={ category }
+                  label={ category }
+                >
+                  <Group direction="column" grow>
+                    {
+                      map( categoryOptions, ( { type, hidden, ...option } ) => {
+                        const OptionComponent = OptionComponents[type];
 
-                      if (OptionComponent) {
+                        if (true === hidden || !OptionComponent) {
+                          return null;
+                        }
+
+                        const onChange = value => {
+                          setValue(option.id, value);
+                          option.onChange && option.onChange(value);
+                        };
+
                         return (
-                          <OptionComponent
-                            { ...option }
+                          <div
                             key={ option.id }
-                            onChange={ value => {
-                              setValue(option.id, value);
-                              option.onChange && option.onChange(value);
+                            onClick={ ( { detail }) => {
+                              if (detail === 2 ) {
+                                onChange( option.defaultValue )
+                              }
                             } }
-                            value={ values[option.id] }
-                          />
-                        )
-                      }
-
-                        return null;
-                    })
-                  }
-                </Group>
+                          >
+                            <OptionComponent
+                              { ...option }
+                              onChange={ onChange }
+                              value={ values[option.id] }
+                              required={ option.defaultValue !== values[option.id] }
+                            />
+                          </div>
+                        );
+                      })
+                    }
+                  </Group>
                 </Accordion.Item>
-            ) )
-          }
-        </Accordion>
+              ) )
+            }
+          </Accordion>
 
-        <Group grow direction="column">
-          <span></span>
-          <Button
-            variant="default"
-            color="gray"
-            onClick={ resetValues }
+          <Group
+            grow
+            direction="column"
+            style={ {
+              marginLeft: 16,
+              marginRight: 16
+            } }
           >
-            Reset options
-          </Button>
+            <span></span>
+            <Button
+              variant="default"
+              color="gray"
+              onClick={ resetValues }
+            >
+              Reset options
+            </Button>
 
-          {/* <Button variant="default" color="gray">
-            Load options
-          </Button> */}
+            {/* <Button variant="default" color="gray">
+              Load options
+            </Button> */}
 
-          <Button
-            variant="default"
-            color="gray"
-            onClick={ persistValues }
+            <Button
+              variant="default"
+              color="gray"
+              onClick={ persistValues }
+            >
+              Save options
+            </Button>
+          </Group>
+
+          <Group
+            grow
+            direction="column"
+            style={ {
+              marginLeft: 16,
+              marginRight: 16
+            } }
           >
-            Save options
-          </Button>
-          <span></span>
-        </Group>
+            <span></span>
 
-        <SwitchOption
-          value={ autoSave }
-          label="Auto save options"
-          onChange={ checked => setSettings( previousSettings => ({
-            ...previousSettings,
-            autoSave: checked
-          })) }
-        />
-        <span>&nbsp;</span>
+            <SwitchOption
+              value={ autoSave }
+              label="Auto save options"
+              onChange={ checked => setSettings( previousSettings => ({
+                ...previousSettings,
+                autoSave: checked
+              })) }
+            />
       
-        <SwitchOption
-          value={ keepOpen }
-          label="Keep SketchUI open"
-          onChange={ checked => setSettings( previousSettings => ({
-            ...previousSettings,
-            keepOpen: checked
-          })) }
-        />
-
+            <SwitchOption
+              value={ keepOpen }
+              label="Keep SketchUI open"
+              onChange={ checked => setSettings( previousSettings => ({
+                ...previousSettings,
+                keepOpen: checked
+              })) }
+            />
+          </Group>
+        </ScrollArea>
       </Drawer>
 
       <Group position="center">
-        <ActionIcon
-          onClick={() => setOpened(true)}
-        >
-          <Adjustments />
-        </ActionIcon>
-      </Group>
+            <ActionIcon
+              onClick={() => setOpened(true)}
+            >
+              <Adjustments />
+            </ActionIcon>
+          </Group>
     </MantineProvider>
   );
 }

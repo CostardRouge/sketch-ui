@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0, user-scalable=no" />
+
     <title>SketchUI</title>
   </head>
   <body>
     <div id="SketchUI-icon"></div>
     <div id="SketchUI-drawer"></div>
-    <script type="module" src="/src/main.jsx"></script>
 
     <script type="module">
       import SketchUI from '/src/main.jsx'
@@ -16,7 +16,7 @@
       const sketchUI = new SketchUI( {
         open: false,
         options: [ 
-        {
+          {
             id: "option-switch",
             type: 'switch',
             label: 'Le switch',

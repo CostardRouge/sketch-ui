@@ -1,9 +1,12 @@
 // Third party
 import { Group, Text, Slider } from '@mantine/core';
 
-const SwitchOption = ( { id, label, value, marks, min, max, step, onChange } ) =>  (
+const SliderOption = ( { id, label, value, marks, min, max, step, required, onChange } ) =>  (
   <Group direction="column" grow key={ id }>
-    <Text size="sm">{ label }</Text>
+    <Text size="sm">{ label }{ required && <span style={ {
+      color: '#ff6b6b',
+      fontWeight: 500
+    }}> *</span> }</Text>
   
     <Slider
       min={ min }
@@ -17,4 +20,4 @@ const SwitchOption = ( { id, label, value, marks, min, max, step, onChange } ) =
   </Group>
 );
 
-export default SwitchOption;
+export default SliderOption;
