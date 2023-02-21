@@ -7,7 +7,6 @@
     <title>SketchUI</title>
   </head>
   <body>
-    <div id="SketchUI-icon"></div>
     <div id="SketchUI-drawer"></div>
 
     <script type="module">
@@ -37,13 +36,7 @@
             ],
             category: ''
           },
-          {
-            id: "option-text",
-            type: 'text',
-            label: 'Le texte',
-            defaultValue: 'Hello World',
-            category: 'Texts'
-          },
+          
           {
             id: "option-select",
             type: 'select',
@@ -111,13 +104,29 @@
           }
         ],
         elements: {
-          drawer: 'div#SketchUI-drawer',
-          icon: 'div#SketchUI-icon'
+          drawer: 'div#SketchUI-drawer'
         },
         logger: console.log
       });
 
       window.sketchUI = sketchUI;
+
+
+      document.addEventListener("click", () => {
+        console.log(sketchUI.getValue("option-1"));
+
+        sketchUI.synchronize([
+        {
+            id: "option-text",
+            type: 'text',
+            label: 'Le texte',
+            defaultValue: 'Hello World',
+            category: 'Texts'
+          }
+        ])
+
+
+      })
     </script>
   </body>
 </html>

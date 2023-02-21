@@ -9,7 +9,6 @@ import { ActionIcon } from '@mantine/core';
 import { Adjustments } from 'tabler-icons-react';
 import { Accordion, Button, ScrollArea } from '@mantine/core';
 
-
 // Hooks
 import { useLocalStorage } from '@mantine/hooks';
 
@@ -17,8 +16,9 @@ import { useLocalStorage } from '@mantine/hooks';
 import OptionComponents from './components';
 import SwitchOption from './components/SwitchOption/SwitchOption';
 
-const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter }) => {
-  const optionsGroupedByCategory = useMemo( () => groupBy( options, 'category'), [ options ]);
+const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter, optionsSetter }) => {
+  const [ passedOptions, setPassedOptions ] = useState(options)
+  const optionsGroupedByCategory = useMemo( () => groupBy( passedOptions, 'category'), [ passedOptions ]);
   const [settings, setSettings] = useLocalStorage({ key: 'sketch-ui-settings', defaultValue: {
     autoSave: false,
     keepOpen: defaultOpenValue,
@@ -92,6 +92,7 @@ const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter 
   useEffect( () => {
     getter( id => values[id] );
     setter( setValue );
+    optionsSetter( setPassedOptions )
   }, [ values ]);
 
   return (
@@ -233,12 +234,15 @@ const SketchUIDrawer = ({ options, name = '_', defaultOpenValue, getter, setter 
       </Drawer>
 
       <Group position="center">
-            <ActionIcon
-              onClick={() => setOpened(true)}
-            >
-              <Adjustments />
-            </ActionIcon>
-          </Group>
+          <ActionIcon
+            onClick={ event => {
+              event.stopPropagation();
+              setOpened(true);
+            }}
+          >
+            <Adjustments />
+          </ActionIcon>
+        </Group>
     </MantineProvider>
   );
 }
